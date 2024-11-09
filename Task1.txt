@@ -1,0 +1,139 @@
+using System;
+
+public class HelloWorld
+{
+    public static void Main(string[] args)
+    {
+        Gallery gallery=new Gallery();
+        
+        Car car1=new Car(1, "Porsche", 100, "LA1001");
+        Car car2=new Car(2, "Mercedes", 150, "ME1002");
+        Car car3=new Car(3, "BMW", 175, "FN2006");
+        
+        gallery.AddCar(car1);
+        gallery.AddCar(car2);
+        gallery.AddCar(car3);
+        
+        foreach(var car in gallery.cars){
+            Console.WriteLine(car.Name);
+        }
+        Console.WriteLine("==========================");
+        
+        gallery.ShowAllCars();
+        Console.WriteLine("==========================");
+        
+        Car[] allCars = gallery.GetAllCars();
+        foreach(var car in allCars){
+            Console.WriteLine($"Id: {car.Id},  Name: {car.Name},  Speed: {car.Speed},  CarCode: {car.CarCode}");
+        }
+        Console.WriteLine("==========================");
+        
+        Car wantedCar=gallery.FindCarByCarCode("FN2006");
+        if(wantedCar!=null){
+            Console.WriteLine(wantedCar.Name);
+        }else{
+            Console.WriteLine("CarCode duzgun deyil ve ya bele bir masin yoxdur!");
+        }
+        Console.WriteLine("==========================");
+        
+        Car[] wantedCars=gallery.FindCarsBySpeedInterval(100, 200);
+        
+        if(wantedCars.Length>0){
+            foreach(var car in wantedCars){
+                Console.WriteLine(car.Name);
+            }
+        }else{
+            Console.WriteLine("Masin tapilmadi!");
+        }
+    }
+}
+
+public class Car{
+    public int Id;
+    public string Name;
+    private double _speed;
+    private string _carCode="null";
+    
+    public double Speed{
+        get=>_speed;
+        
+        set{
+            if(value>=0){
+                _speed=value;
+            }else{
+                Console.WriteLine("Menfi eded ve ya 0 oola bilmez!");
+            }
+        }
+    }
+    
+    public string CarCode{
+        get=>_carCode;
+        
+        set{
+            if (value.Length == 6 && char.IsUpper(value[0]) && char.IsUpper(value[1]) && char.IsDigit(value[2])){
+                if (char.IsDigit(value[3]) && char.IsDigit(value[4]) && char.IsDigit(value[5])){
+                    _carCode = value;
+                }
+            }else{
+            Console.WriteLine($"{value} duzgun deyil!");
+            }
+        }
+    }
+    
+    public Car(int id, string name, double speed, string carCode){
+        Id=id;
+        Name=name;
+        Speed=speed;
+        CarCode=carCode;
+    }
+}
+
+public class Gallery{
+    public int Id;
+    public string Name;
+    
+    public Car[] cars=new Car[0];
+    
+    public void AddCar(Car car){
+        Array.Resize(ref cars, cars.Length+1);
+        cars[^1]=car;
+    }
+    
+    public void ShowAllCars(){
+        foreach(var car in cars){
+            Console.WriteLine($"Id: {car.Id},  Name: {car.Name},  Speed: {car.Speed},  CarCode: {car.CarCode}");
+        }
+    }
+    
+    public Car[] GetAllCars(){
+        Car[] allCars=new Car[0];
+        foreach(var car in cars){
+            Array.Resize(ref allCars, allCars.Length+1);
+            allCars[^1]=car;
+        }
+        return allCars;
+    }
+    
+    public Car FindCarByCarCode(string carCode){
+        if(carCode.Length==6){
+            foreach(var car in cars){
+                if(car.CarCode==carCode){
+                    return car;
+                }
+            }
+        }
+        return null;
+    }
+        
+    public Car[] FindCarsBySpeedInterval(double minSpeed, double maxSpeed){
+        Car[] filteredCars=new Car[0];
+        
+        foreach(var car in cars){
+            if(car.Speed>minSpeed && car.Speed<maxSpeed){
+                Array.Resize(ref filteredCars, filteredCars.Length+1);
+                filteredCars[^1]=car;
+            }
+        }
+        return filteredCars;
+    }
+    }

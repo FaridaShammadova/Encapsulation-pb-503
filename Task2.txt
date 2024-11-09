@@ -1,0 +1,159 @@
+using System;
+
+public class HelloWorld
+{
+    public static void Main(string[] args)
+    {
+        Library library=new Library();
+        
+        Book book1=new Book(1, "Mavi qatarin sirri", 5.5, "detektiv");
+        Book book2=new Book(2, "Romeo ve Juliet", 7, "roman");
+        Book book3=new Book(3, "Cirtdan", 8.5, "nagil");
+        Book book4=new Book(4, "Baskevirlerin iti", 6, "detektiv");
+        
+        library.AddBook(book1);
+        library.AddBook(book2);
+        library.AddBook(book3);
+        library.AddBook(book4);
+        
+        foreach(var book in library.books){
+            Console.WriteLine(book.Name);
+        }
+        Console.WriteLine("==========================");
+        
+        Book wantedBook1=library.GetBookById(1);
+        
+            if(wantedBook1!=null){
+                Console.WriteLine(wantedBook1.Name);
+            }else{
+                Console.WriteLine("Bu kitab tapilmadi!");
+            }
+        Console.WriteLine("==========================");
+            
+        Book wantedBook2=library.GetBookByName("Cirtdan");
+        
+        if(wantedBook2!=null){
+            Console.WriteLine(wantedBook2.Name);
+        }else{
+            Console.WriteLine("Kitab tapilmadi!");
+        }
+        Console.WriteLine("==========================");
+        
+        Book[] wantedBooks1=library.GetFilteredBooks("detektiv");
+        
+        if(wantedBooks1.Length>0){
+            foreach(var book in wantedBooks1){
+                Console.WriteLine(book.Name);
+            }
+        }else{
+            Console.WriteLine("Kitab tapilmadi!");
+        }
+        Console.WriteLine("==========================");
+        
+        Book[] wantedBooks2=library.GetFilteredBooks(1, 5);
+        
+        if(wantedBooks2.Length>0){
+            foreach(var book in wantedBooks2){
+                Console.WriteLine(book.Name);
+            }
+        }else{
+            Console.WriteLine("Kitab tapilmadi!");
+        }
+    }
+}
+
+public class Product{
+    public int Id;
+    public string Name;
+    private double _price;
+    private int _count;
+    
+    public double Price{
+        get=>_price;
+        
+        set{
+            if(value>=0){
+                _price=value;
+            }else{
+                Console.WriteLine("Menfi eded ve ya 0 ola bilmez!");
+            }
+        }
+    }
+    
+    public int Count{
+        get=>_count;
+        
+        set{
+            if(value>=0){
+                _count=value;
+            }else{
+                Console.WriteLine("Menfi eded ve ya 0 ola bilmez!");
+            }
+        }
+    }
+    
+    public Product(int id, string name, double price){
+        Id=id;
+        Name=name;
+        Price=price;
+    }
+}
+
+public class Book: Product{
+    public string Genre;
+    
+    public Book(int id, string name, double price, string genre): base(id, name, price){
+        Genre=genre;
+    }
+}
+
+public class Library{
+    public Book[] books=new Book[0];
+    
+    public void AddBook(Book book){
+        Array.Resize(ref books, books.Length+1);
+        books[^1]=book;
+    }
+    
+    public Book GetBookById(int id){
+        foreach(var book in books){
+            if(book.Id==id){
+                return book;
+            }
+        }
+        return null;
+    }
+    
+    public Book GetBookByName(string name){
+        foreach(var book in books){
+            if(book.Name==name){
+                return book;
+            }
+        }
+        return null;
+    }
+    
+    public Book[] GetFilteredBooks(string value){
+        Book[] filteredBooks=new Book[0];
+        
+        foreach(var book in books){
+            if(book.Genre==value){
+                Array.Resize(ref filteredBooks, filteredBooks.Length+1);
+                filteredBooks[^1]=book;
+            }
+        }
+        return filteredBooks;
+    }
+    
+    public Book[] GetFilteredBooks(double minPrice, double maxPrice){
+        Book[] filteredBooks=new Book[0];
+        
+        foreach(var book in books){
+            if(book.Price>minPrice && book.Price<maxPrice){
+                Array.Resize(ref filteredBooks, filteredBooks.Length+1);
+                filteredBooks[^1]=book;
+            }
+        }
+        return filteredBooks;
+    }
+}
